@@ -5,26 +5,24 @@ import Request from '@edgio/core/router/Request'
 
 export default new Router()
 
-  // .match(
-  //   '/uk/c/clothing',
-  //   ({ cache, removeUpstreamResponseHeader, proxy, updateResponseHeader, updateUpstreamResponseCookie }) => {
-  //     updateResponseHeader('location', /https:\/\/thewhitecompany.com\//gi, '/')
-  //     updateResponseHeader('location', /https:\/\/www.thewhitecompany.com\//gi, '/')
-  //     updateUpstreamResponseCookie('geolocation', /domain=.+;/, '')
-  //     proxy('origin')
-  //   }
-  // )
-
+  // Redirects for New Website
   .match(
     {path: '/', cookies: { country: 'us' }},
-    ({redirect}) => {redirect('/us', 301);})
+    ({redirect, setResponseHeader}) => {
+      setResponseHeader('cache-control', 'Cache-Control: no-store, no-cache, must-revalidate')
+      setResponseHeader('Pragma', 'no-cache')
+      redirect('/us', 301);
+    })
 
   .match(
     {path: '/',},
-    ({redirect}) => {redirect('/uk', 301);})
+    ({redirect, setResponseHeader}) => {
+      setResponseHeader('cache-control', 'Cache-Control: no-store, no-cache, must-revalidate')
+      setResponseHeader('Pragma', 'no-cache')
+      redirect('/uk', 301);
+    })
 
   .match({ path: '/:one/' }, ({ cache, compute, redirect }) => {
-    cache(CACHE_PAGES)
     redirect('/:one', 301);
   })
 
@@ -33,15 +31,43 @@ export default new Router()
     renderWithApp()
   })
 
-  .match({ path: '/:uspath', cookies: { country: 'us'  }},
-  ({ cache, redirect }) => {
-    cache(CACHE_PAGES)
-    redirect('/us/' + ':uspath', 301);
+  .match({ path: '/:path', cookies: { country: 'us'  }},
+  ({ setResponseHeader, redirect }) => {
+    setResponseHeader('cache-control', 'Cache-Control: no-store, no-cache, must-revalidate')
+    setResponseHeader('Pragma', 'no-cache')
+    redirect('/us/' + ':path', 301);
   })
 
-  .match({ path: '/:one' }, ({ cache, redirect }) => {
-    cache(CACHE_PAGES)
-    redirect('/uk/' + ':one', 301);
+  .match({ path: '/:path' }, ({ setResponseHeader, redirect }) => {
+    setResponseHeader('cache-control', 'Cache-Control: no-store, no-cache, must-revalidate')
+    setResponseHeader('Pragma', 'no-cache')
+    redirect('/uk/' + ':path', 301);
   })
+
+
+  // Legacy - Perfect Proxy Category page
+  .match(
+    '/uk/c/:cat',
+    ({ cache, removeUpstreamResponseHeader, proxy, updateResponseHeader, updateUpstreamResponseCookie }) => {
+      updateResponseHeader('location', /https:\/\/thewhitecompany.com\//gi, '/')
+      updateResponseHeader('location', /https:\/\/www.thewhitecompany.com\//gi, '/')
+      updateUpstreamResponseCookie('geolocation', /domain=.+;/, '')
+      proxy('origin')
+    }
+  )
+  // Legacy - Fixing relative paths
+  .match('/uk/api/:path*', ({ cache, proxy }) => {
+    return proxy('origin', { path: '/uk/api/:path*' })
+  })
+  .match('/uk/header/:path*', ({ cache, proxy }) => {
+    return proxy('origin', { path: '/uk/header/:path*' })
+  })
+  .match('/_ui/:path*', ({ cache, proxy }) => {
+    return proxy('origin', { path: '/_ui/:path*' })
+  })
+  .match('/uk/twccmsservice/:path*', ({ cache, proxy }) => {
+    return proxy('origin', { path: '/uk/twccmsservice/:path*' })
+  })
+
 
 .use(nuxtRoutes)

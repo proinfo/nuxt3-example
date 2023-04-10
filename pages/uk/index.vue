@@ -4,7 +4,8 @@
       <nav>
         <ul>
           <li><nuxt-link to="/uk/">Home</nuxt-link></li>
-          <li><nuxt-link to="/uk/test">test</nuxt-link></li>
+          <li><nuxt-link to="/uk/test">Test</nuxt-link></li>
+          <li><a href="/uk/c/clothing">Legacy</a></li>
         </ul>
       </nav>
     </header>

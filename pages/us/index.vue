@@ -3,8 +3,8 @@
     <header>
       <nav>
         <ul>
-          <li><nuxt-link to="/es/">Home</nuxt-link></li>
-          <li><nuxt-link to="/es/test">test</nuxt-link></li>
+          <li><nuxt-link to="/us/">Home</nuxt-link></li>
+          <li><nuxt-link to="/us/test">test</nuxt-link></li>
         </ul>
       </nav>
     </header>
