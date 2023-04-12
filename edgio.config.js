@@ -18,14 +18,6 @@ module.exports = {
       domainOrIp: "www.thewhitecompany.com",
       hostHeader: "www.thewhitecompany.com",
     },
-    api: {
-      domainOrIp: "api.thewhitecompany.com",
-      hostHeader: "api.thewhitecompany.com",
-    },
-    same: {
-      domainOrIp: "demos-emea-nuxt-app-default.layer0-limelight.link",
-      hostHeader: "demos-emea-nuxt-app-default.layer0-limelight.link",
-    }
   },
 
   // origins: [

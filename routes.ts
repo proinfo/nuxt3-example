@@ -20,9 +20,9 @@ export default new Router()
       redirect('/uk', 301);
     })
 
-  .match({ path: '/:one/' }, ({ cache,redirect }) => {
+  .match({ path: '/:one*/' }, ({ cache,redirect }) => {
     cache(CACHE_REDIRECT)
-    redirect('/:one', 301);
+    redirect('/:one*', 301);
   })
 
   .match({ path: '/uk', cookies: { country: 'us'  }},
