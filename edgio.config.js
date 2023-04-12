@@ -18,6 +18,10 @@ module.exports = {
       domainOrIp: "www.thewhitecompany.com",
       hostHeader: "www.thewhitecompany.com",
     },
+    api: {
+      domainOrIp: "api.thewhitecompany.com",
+      hostHeader: "api.thewhitecompany.com",
+    },
   },
 
   // origins: [
