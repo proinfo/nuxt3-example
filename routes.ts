@@ -1,4 +1,4 @@
-import { CACHE_ASSETS, CACHE_PAGES } from './src/cache'
+import { CACHE_ASSETS, CACHE_PAGES, CACHE_REDIRECT } from './src/cache'
 import { Router } from '@edgio/core'
 import { nuxtRoutes } from '@edgio/nuxt-nitro'
 import Request from '@edgio/core/router/Request'
@@ -8,7 +8,7 @@ export default new Router()
   // Redirects for New Website
   .match(
     {path: '/', cookies: { country: 'us' }},
-    ({redirect, setResponseHeader}) => {
+    ({renderWithApp, redirect, cache, setResponseHeader}) => {
       setResponseHeader('cache-control', 'Cache-Control: no-store, no-cache, must-revalidate')
       setResponseHeader('Pragma', 'no-cache')
       redirect('/us', 301);
@@ -53,20 +53,17 @@ export default new Router()
     cache(CACHE_PAGES)
     renderWithApp()
   })
-
   .match({ path: '/:path*', cookies: { country: 'us'  }},
   ({ setResponseHeader, redirect }) => {
     setResponseHeader('cache-control', 'Cache-Control: no-store, no-cache, must-revalidate')
     setResponseHeader('Pragma', 'no-cache')
     redirect('/us/' + ':path*', 301);
   })
-
   .match({ path: '/:path*' }, ({ setResponseHeader, redirect }) => {
     setResponseHeader('cache-control', 'Cache-Control: no-store, no-cache, must-revalidate')
     setResponseHeader('Pragma', 'no-cache')
     redirect('/uk/' + ':path*', 301);
   })
-
 
   // Legacy - Perfect Proxy Category page
   .match(
