@@ -22,6 +22,10 @@ module.exports = {
       domainOrIp: "api.thewhitecompany.com",
       hostHeader: "api.thewhitecompany.com",
     },
+    same: {
+      domainOrIp: "demos-emea-nuxt-app-default.layer0-limelight.link",
+      hostHeader: "demos-emea-nuxt-app-default.layer0-limelight.link",
+    }
   },
 
   // origins: [

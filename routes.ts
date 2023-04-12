@@ -8,39 +8,36 @@ export default new Router()
   // Redirects for New Website
   .match(
     {path: '/', cookies: { country: 'us' }},
-    ({renderWithApp, redirect, cache, setResponseHeader}) => {
-      setResponseHeader('cache-control', 'Cache-Control: no-store, no-cache, must-revalidate')
-      setResponseHeader('Pragma', 'no-cache')
+    ({redirect, cache}) => {
+      cache(CACHE_REDIRECT)
       redirect('/us', 301);
     })
 
   .match(
     {path: '/',},
-    ({redirect, setResponseHeader}) => {
-      setResponseHeader('cache-control', 'Cache-Control: no-store, no-cache, must-revalidate')
-      setResponseHeader('Pragma', 'no-cache')
+    ({redirect, cache}) => {
+      cache(CACHE_REDIRECT)
       redirect('/uk', 301);
     })
 
-  .match({ path: '/:one/' }, ({ cache, compute, redirect }) => {
+  .match({ path: '/:one/' }, ({ cache,redirect }) => {
+    cache(CACHE_REDIRECT)
     redirect('/:one', 301);
   })
 
   .match({ path: '/uk', cookies: { country: 'us'  }},
-  ({ setResponseHeader, redirect }) => {
-    setResponseHeader('cache-control', 'Cache-Control: no-store, no-cache, must-revalidate')
-    setResponseHeader('Pragma', 'no-cache')
+  ({ cache, redirect }) => {
+    cache(CACHE_REDIRECT)
     redirect('/us', 301);
   })
 
   .match({ path: '/us', cookies: { country: 'uk'  }},
-  ({ setResponseHeader, redirect }) => {
-    setResponseHeader('cache-control', 'Cache-Control: no-store, no-cache, must-revalidate')
-    setResponseHeader('Pragma', 'no-cache')
+  ({ cache, redirect }) => {
+    cache(CACHE_REDIRECT)
     redirect('/uk', 301);
   })
 
-  .match({path: '/:path(uk|us|row|manifest|service-worker|assets)'}, ({renderWithApp, cache}) => {
+  .match({path: '/:path(uk|us|row|manifest|service-worker|assets|_nuxt)'}, ({renderWithApp, cache}) => {
     cache(CACHE_PAGES)
     renderWithApp()
   })
@@ -49,19 +46,13 @@ export default new Router()
     cache(CACHE_PAGES)
     renderWithApp()
   })
-  .match({path: '/_nuxt/:path*'}, ({renderWithApp, cache}) => {
-    cache(CACHE_PAGES)
-    renderWithApp()
-  })
-  .match({ path: '/:path*', cookies: { country: 'us'  }},
-  ({ setResponseHeader, redirect }) => {
-    setResponseHeader('cache-control', 'Cache-Control: no-store, no-cache, must-revalidate')
-    setResponseHeader('Pragma', 'no-cache')
+  .match({ path: '/:path((?!.*_nuxt).+)', cookies: { country: 'us'  }},
+  ({ cache, redirect }) => {
+    cache(CACHE_REDIRECT)
     redirect('/us/' + ':path*', 301);
   })
-  .match({ path: '/:path*' }, ({ setResponseHeader, redirect }) => {
-    setResponseHeader('cache-control', 'Cache-Control: no-store, no-cache, must-revalidate')
-    setResponseHeader('Pragma', 'no-cache')
+  .match({ path: '/:path((?!.*_nuxt).+)' }, ({ cache, redirect }) => {
+    cache(CACHE_REDIRECT)
     redirect('/uk/' + ':path*', 301);
   })
 
