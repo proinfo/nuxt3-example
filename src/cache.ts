@@ -1,12 +1,13 @@
 import { CustomCacheKey } from '@edgio/core/router'
 const ONE_HOUR = 60 * 60
 const ONE_DAY = 24 * ONE_HOUR
+const ONE_YEAR = 365 * ONE_DAY
 
 
 export const CACHE_REDIRECT = {
   key: new CustomCacheKey().addCookie('country'),
   edge: {
-    maxAgeSeconds: ONE_HOUR,
+    maxAgeSeconds: ONE_YEAR,
   },
   browser: {
     caches: false,

@@ -1,7 +1,6 @@
 import { CACHE_ASSETS, CACHE_PAGES, CACHE_REDIRECT } from './src/cache'
 import { Router } from '@edgio/core'
 import { nuxtRoutes } from '@edgio/nuxt-nitro'
-import Request from '@edgio/core/router/Request'
 
 export default new Router()
 
