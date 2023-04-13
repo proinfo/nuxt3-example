@@ -4,6 +4,30 @@ import { nuxtRoutes } from '@edgio/nuxt-nitro'
 
 export default new Router()
 
+  // Legacy - Perfect Proxy Category page
+  .match(
+    '/uk/c/:cat',
+    ({ cache, removeUpstreamResponseHeader, proxy, updateResponseHeader, updateUpstreamResponseCookie }) => {
+      updateResponseHeader('location', /https:\/\/thewhitecompany.com\//gi, '/')
+      updateResponseHeader('location', /https:\/\/www.thewhitecompany.com\//gi, '/')
+      updateUpstreamResponseCookie('geolocation', /domain=.+;/, '')
+      proxy('origin')
+    }
+  )
+  // Legacy - Fixing relative paths
+  .match('/uk/api/:path*', ({ cache, proxy }) => {
+    return proxy('origin', { path: '/uk/api/:path*' })
+  })
+  .match('/uk/header/:path*', ({ cache, proxy }) => {
+    return proxy('origin', { path: '/uk/header/:path*' })
+  })
+  .match('/_ui/:path*', ({ cache, proxy }) => {
+    return proxy('origin', { path: '/_ui/:path*' })
+  })
+  .match('/uk/twccmsservice/:path*', ({ cache, proxy }) => {
+    return proxy('origin', { path: '/uk/twccmsservice/:path*' })
+  })
+
   // Redirects for New Website
   .match(
     {path: '/', cookies: { country: 'us' }},
@@ -55,28 +79,12 @@ export default new Router()
     redirect('/uk/' + ':path*', 301);
   })
 
-  // Legacy - Perfect Proxy Category page
-  .match(
-    '/uk/c/:cat',
-    ({ cache, removeUpstreamResponseHeader, proxy, updateResponseHeader, updateUpstreamResponseCookie }) => {
-      updateResponseHeader('location', /https:\/\/thewhitecompany.com\//gi, '/')
-      updateResponseHeader('location', /https:\/\/www.thewhitecompany.com\//gi, '/')
-      updateUpstreamResponseCookie('geolocation', /domain=.+;/, '')
-      proxy('origin')
-    }
-  )
-  // Legacy - Fixing relative paths
-  .match('/uk/api/:path*', ({ cache, proxy }) => {
-    return proxy('origin', { path: '/uk/api/:path*' })
-  })
-  .match('/uk/header/:path*', ({ cache, proxy }) => {
-    return proxy('origin', { path: '/uk/header/:path*' })
-  })
-  .match('/_ui/:path*', ({ cache, proxy }) => {
-    return proxy('origin', { path: '/_ui/:path*' })
-  })
-  .match('/uk/twccmsservice/:path*', ({ cache, proxy }) => {
-    return proxy('origin', { path: '/uk/twccmsservice/:path*' })
+
+
+.match({ path: '/uk/test'},
+  ({ renderWithApp, cache }) => {
+    cache(CACHE_REDIRECT)
+    renderWithApp()
   })
 
 
