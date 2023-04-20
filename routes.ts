@@ -4,17 +4,13 @@ import { nuxtRoutes } from '@edgio/nuxt-nitro'
 
 export default new Router()
 
-  // Legacy - Perfect Proxy Category page
-  .match(
-    '/uk/c/:cat',
-    ({ cache, removeUpstreamResponseHeader, proxy, updateResponseHeader, updateUpstreamResponseCookie }) => {
-      updateResponseHeader('location', /https:\/\/thewhitecompany.com\//gi, '/')
-      updateResponseHeader('location', /https:\/\/www.thewhitecompany.com\//gi, '/')
-      updateUpstreamResponseCookie('geolocation', /domain=.+;/, '')
-      proxy('origin')
-    }
-  )
-  // Legacy - Fixing relative paths
+  .match('/_nuxt/:path*)', ({renderWithApp, setResponseHeader, cache, proxy}) => {
+    setResponseHeader('sheba', 'testing')
+    cache(CACHE_PAGES)
+    renderWithApp()
+  })
+
+// Legacy
   .match('/uk/api/:path*', ({ cache, proxy }) => {
     return proxy('origin', { path: '/uk/api/:path*' })
   })
@@ -27,48 +23,77 @@ export default new Router()
   .match('/uk/twccmsservice/:path*', ({ cache, proxy }) => {
     return proxy('origin', { path: '/uk/twccmsservice/:path*' })
   })
+  .match('/TWCcommercewebservices/:path*', ({ proxy}) => {
+    return proxy('origin', { path: '/TWCcommercewebservices/:path*' })
+  })
 
-  // Redirects for New Website
+  // Redirects
   .match(
     {path: '/', cookies: { country: 'us' }},
     ({redirect, cache}) => {
       cache(CACHE_REDIRECT)
       redirect('/us', 301);
     })
-
   .match(
     {path: '/',},
     ({redirect, cache}) => {
       cache(CACHE_REDIRECT)
       redirect('/uk', 301);
     })
-
   .match({ path: '/:one*/' }, ({ cache,redirect }) => {
     cache(CACHE_REDIRECT)
     redirect('/:one*', 301);
   })
-
   .match({ path: '/uk', cookies: { country: 'us'  }},
   ({ cache, redirect }) => {
     cache(CACHE_REDIRECT)
     redirect('/us', 301);
   })
-
   .match({ path: '/us', cookies: { country: 'uk'  }},
   ({ cache, redirect }) => {
     cache(CACHE_REDIRECT)
     redirect('/uk', 301);
   })
 
-  .match({path: '/:path(uk|us|row|manifest|service-worker|assets|_nuxt)'}, ({renderWithApp, cache}) => {
-    cache(CACHE_PAGES)
+  // **********************
+  // New Website URLs
+  // **********************
+  .match(
+    '/uk',
+    ({ renderWithApp, cache }) => {
+      cache(CACHE_PAGES)
+      renderWithApp()
+    }
+  )
+  .match(
+    '/us',
+    ({ renderWithApp, cache }) => {
+      cache(CACHE_PAGES)
+      renderWithApp()
+    }
+  )
+  .match('/:lang/test',
+    ({ renderWithApp, cache }) => {
+    cache(CACHE_REDIRECT)
     renderWithApp()
   })
 
-  .match({path: '/:lang(uk|us)/:path*'}, ({renderWithApp, cache}) => {
+  .match('/:path(row|manifest|service-worker|assets)', ({renderWithApp, cache}) => {
     cache(CACHE_PAGES)
     renderWithApp()
   })
+  // **********************
+  // END of Website URLs
+  // **********************
+
+  // Negative matching for proper path in order to avoid redirect
+  .match({path: '/:lang(uk|us)/:path*'}, ({updateResponseHeader, updateUpstreamResponseCookie, proxy}) => {
+    updateResponseHeader('location', /https:\/\/thewhitecompany.com\//gi, '/')
+    updateResponseHeader('location', /https:\/\/www.thewhitecompany.com\//gi, '/')
+    updateUpstreamResponseCookie('geolocation', /domain=.+;/, '')
+    proxy('origin')
+  })
+  // Redirect for paths that don't have language
   .match({ path: '/:path((?!.*_nuxt).+)', cookies: { country: 'us'  }},
   ({ cache, redirect }) => {
     cache(CACHE_REDIRECT)
@@ -80,12 +105,13 @@ export default new Router()
   })
 
 
+.fallback(({ proxy, updateResponseHeader, updateUpstreamResponseCookie }) => {
+  updateResponseHeader('location', /https:\/\/thewhitecompany.com\//gi, '/')
+  updateResponseHeader('location', /https:\/\/www.thewhitecompany.com\//gi, '/')
+  updateUpstreamResponseCookie('geolocation', /domain=.+;/, '')
+  proxy('origin')
+  //serveStatic('404/404.html') // Displays Out of Bounds for all pages that are not part of PIE (needs to be tested and adjusted for each project)
+})
 
-.match({ path: '/uk/test'},
-  ({ renderWithApp, cache }) => {
-    cache(CACHE_REDIRECT)
-    renderWithApp()
-  })
 
-
-.use(nuxtRoutes)
+// .use(nuxtRoutes)
